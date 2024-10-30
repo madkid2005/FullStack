@@ -1,0 +1,47 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(45deg, red, maroon);
+  }
+  
+  .form-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* دو ستون برای دسکتاپ */
+    gap: 16px; /* فاصله بین ستون‌ها */
+    padding: 20px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.9); /* پس‌زمینه فرم */
+  }
+  
+  @media (max-width: 768px) {
+    .form-container {
+      grid-template-columns: 1fr; /* یک ستون برای موبایل */
+    }
+  }
+  
+  input, select {
+    width: 100%; /* عرض کامل */
+    padding: 10px; /* پدینگ داخلی */
+    margin: 8px 0; /* حاشیه عمودی */
+    border: 1px solid #ccc; /* حاشیه */
+    border-radius: 4px; /* گرد کردن لبه‌ها */
+  }
+  
+  button {
+    grid-column: span 2; /* دکمه در حالت دسکتاپ در دو ستون قرار گیرد */
+    padding: 10px;
+    border: none;
+    background-color: red; /* رنگ دکمه */
+    color: white; /* رنگ متن */
+    border-radius: 4px; /* گرد کردن لبه‌ها */
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: darkred; /* تغییر رنگ در حالت هاور */
+  }
+  

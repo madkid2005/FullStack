@@ -3,16 +3,19 @@ import RegisterForm from './components/RegisterForm';
 import LoginForm from './components/LoginForm';
 import Products from './components/Products';
 import Dashboard from "./components/Dashboard";
+import RegisterSeller from "./components/RegisterSeller";
+
 
 function App() {
 
     return (
         <Router>
             <div className="App">
-                <nav>
+                <nav className='position-fixed'>
                     <Link to="/">Home</Link> | 
                     <Link to="/register">Register</Link> | 
                     <Link to="/login">Login</Link> |
+                    <Link to="/RegisterSeller">RegisterSeller</Link> |
                 </nav>
               
                 <Routes>
@@ -21,6 +24,7 @@ function App() {
                     <Route path="/login" element={<LoginForm />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/Dashboard" element={<Dashboard />} />
+                    <Route path="/RegisterSeller" element={<RegisterSeller />} />
                 </Routes>
             </div>
         </Router>

@@ -1,4 +1,3 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 
-def some_view(request):
-    return HttpResponse("This is a response from some_view.")
+# Create your views here.

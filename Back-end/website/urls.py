@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import permissions
@@ -14,8 +16,8 @@ urlpatterns = [
    path('api/users/', include('users.urls')),
    path('api/products/', include('products.urls')),
    path('api/orders/', include('orders.urls')),
-   path('api/cart/', include('cart.urls')),
    path('api/seller/', include('seller_panel.urls')),
+
 
    # docs
    path('api/schema/', SpectacularAPIView.as_view(), name="schema"),
@@ -23,4 +25,4 @@ urlpatterns = [
 
 
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

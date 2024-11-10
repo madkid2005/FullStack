@@ -3,36 +3,47 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 from .myusermanager import MyUserManager
 import datetime
+from django.utils import timezone
 import random
+import hashlib
+
+
 
 class MyUser(AbstractUser):
-    user = models.OneToOneField('self', on_delete=models.CASCADE, unique=True, related_name='MyUser', null=True)
     mobile = models.CharField(max_length=11, unique=True)
     is_verified = models.BooleanField(default=False)
-    otp = models.IntegerField(blank=True, null=True)
+    otp = models.CharField(max_length=64, blank=True, null=True)  # Storing hashed OTP
     otp_create_time = models.DateTimeField(auto_now=True)
     is_customer = models.BooleanField(default=True)
     is_seller = models.BooleanField(default=False)
-    username = models.CharField(max_length=150, unique=True, blank=True)  # Make username optional
-    meli_code = models.CharField(max_length=10, blank=True ,unique=True, null=True,)
+    meli_code = models.CharField(max_length=10, blank=True, unique=True, null=True)
 
     objects = MyUserManager()
 
     USERNAME_FIELD = 'mobile'
     REQUIRED_FIELDS = []
-    backend = 'users.mybackend.ModelBackend'
-
-
-
+    
     def save(self, *args, **kwargs):
         if not self.username:
             self.username = self.mobile
         super().save(*args, **kwargs)
         
     def generate_otp(self):
-        self.otp = random.randint(100000, 999999)
-        self.otp_create_time = datetime.datetime.now()
+        otp_plain = str(random.randint(100000, 999999))
+        self.otp = hashlib.sha256(otp_plain.encode()).hexdigest()
+        self.otp_create_time = timezone.now()
         self.save()
+        print(otp_plain)
+        return otp_plain
+     
+    def is_otp_valid(self, otp_plain):
+        otp_hashed = hashlib.sha256(otp_plain.encode()).hexdigest()
+        is_valid = (
+            self.otp == otp_hashed and 
+            timezone.now() - self.otp_create_time < timezone.timedelta(minutes=5)
+        )
+        return is_valid
+
 
 class Customer(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE, related_name='customer_profile')

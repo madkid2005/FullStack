@@ -1,55 +1,38 @@
-button {
-  font-size: 1rem;
-  width: 30px;
-  border: 1px solid #d6d6d6;
+.input-search {
+  padding: 10px;             
+  font-size: 16px;     
+  background-color: rgb(238, 238, 238);    
+  border-radius: 5px;       
+  outline: none;
+  transition: border-color 0.3s ease; 
 }
 
-.App {
-
-  width: 100%;
-  font-family: sans-serif;
-  text-align: center;
+.input-search:focus {
+  border-color: #007bff;     
 }
 
-.display {
-  width: 40%;
-  height: 20px;
-  align-self: center;
-  background: lightgray;
-  padding: 10px;
-  border-radius: 6px;
+
+.register-btn {
+  background-color: #ffffff;        
+  color: rgb(0, 0, 0);                    
+border: 1px solid rgba(0, 0, 0, 0.416);
+  padding: 10px 20px;               
+  font-size: 16px;                 
+  border-radius: 5px;               
+  cursor: pointer;               
+  transition: background-color 0.3s ease; 
 }
 
-.expression {
-  height: 30px;
-  color: rgb(170, 170, 170);
+.register-btn:hover {
+border: 1px solid black;
 }
 
-.panel {
-  display: flex;
-  justify-content: center;
+.link-text {
+  text-decoration: none;            /* حذف خط زیر لینک */
+  color: inherit;                   /* ارث‌بری رنگ از دکمه */
+  font-weight: bold;                /* ضخیم کردن فونت */
 }
 
-.numbers {
-  display: flex;
-  flex-flow: wrap;
-  flex-wrap: wrap;
-  justify-items: stretch;
-  width: 90px;
-}
-
-.numbers button:last-child {
-  width: 100%;
-}
-
-.operators {
-  display: flex;
-  flex-flow: column;
-}
-
-.operators button {
-  color: white;
-  background: #7f39ff;
-  border-left: none;
-  border-bottom: 0;
+.link-text:hover {
+  text-decoration: underline;       /* اضافه کردن خط زیر لینک هنگام hover */
 }

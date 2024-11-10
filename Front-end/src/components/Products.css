@@ -1,0 +1,40 @@
+/* استایل برای نمایش هر محصول */
+.product {
+    background-color: #fff;            /* رنگ پس‌زمینه سفید */
+    border-radius: 8px;                /* گوشه‌های گرد */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* سایه نرم */
+    margin: 5px;                      /* فاصله از دیگر محصولات */
+    padding: 15px;                     /* فاصله داخلی */
+    text-align: center;                /* متن را در وسط قرار می‌دهد */
+    transition: transform 0.3s ease;   /* انیمیشن برای تغییر اندازه */
+}
+
+/* تغییرات هنگام hover */
+.product:hover {
+    transform: translateY(-10px);      /* حرکت دادن به بالا */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);  /* سایه تیره‌تر */
+}
+
+/* استایل برای تصویر محصول */
+.product-image {
+    width: 100%;                       /* عرض تصویر برابر با عرض محتوای محصول */
+    height: auto;                      /* نسبت ابعاد تصویر حفظ شود */
+    border-radius: 8px;                /* گوشه‌های گرد تصویر */
+    object-fit: cover;                 /* حفظ تناسب تصویر */
+}
+
+/* استایل برای نام محصول */
+.product-name {
+    font-size: 1.5rem;                 /* اندازه فونت بزرگتر */
+    font-weight: bold;                 /* ضخیم بودن متن */
+    margin-top: 15px;                  /* فاصله از بالای عنصر */
+    color: #333;                       /* رنگ متن */
+}
+
+/* استایل برای توضیحات محصول */
+.product-description {
+    font-size: 1rem;                   /* اندازه فونت معمولی */
+    color: #666;                       /* رنگ خاکی برای متن توضیحات */
+    margin-top: 10px;                   /* فاصله از بالا */
+    line-height: 1.5;                  /* فاصله خطوط بیشتر */
+}

@@ -1,9 +1,16 @@
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import RegisterCustomer from './components/RegisterCustomer';
 import Products from './components/Products';
-import TypeProduct from './components/Brand';
+import TypeBrand from './components/TypeBrand';
 import BigBanner from './components/BigBanner';
+import Categories from './components/Categories';
+import ProductDetail from './components/ProductDatial';
+import TakKharid from './components/TakKharid';
+import ProductSale from './components/ProductSale';
 import "./App.css"
+import SmallBanner from './components/SmallBanner';
+import DasteBandi from './components/DasteBandi';
+
 function App() {
 
     return (
@@ -18,14 +25,17 @@ function App() {
                     </div>
 
 
-                    <div className='container mt-2'>
+                    <div className='container-fluid mt-2'>
                         <div className='row'>
 
-                            <div className='col-lg-1'>
+                            <div className='col-lg-2'>
+                                <TakKharid />
+
+
 
                             </div>
 
-                            <div className='col-lg-6'>
+                            <div className='col-lg-5'>
                                 <input
                                     className='w-100 border-0 input-search rounded-3'
                                     type="text"
@@ -34,17 +44,24 @@ function App() {
                             </div>
 
                             <div className='col-lg-5 '>
-                                <button className="register-btn">
-                                    <Link to="/register" className="link-text">ورود | ثبت نام</Link>
-                                </button>
+
+                                <div className='text-end'>
+                                    <Link to="/">Home</Link> |
+                                    <Link to="/Products">Products</Link> |
+                                    <button className="register-btn ">
+                                        <Link to="/register" className="link-text h6">ورود | ثبت نام</Link>
+                                    </button>
+                                    <span className='px-1'></span>
+                                    <button className="register-btn ">
+                                        <Link to="/register" className="link-text"><span className='bi bi-shop '></span></Link>
+                                    </button>
+                                </div>
 
                             </div>
 
                         </div>
 
                     </div>
-                    <Link to="/">Home</Link> |
-                    <Link to="/Products">Products</Link> |
 
                 </nav>
 
@@ -52,7 +69,7 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/register" element={<RegisterCustomer />} />
                     <Route path="/Products" element={<Products />} />
-
+                    <Route path="/products/:id" element={<ProductDetail />} />
                 </Routes>
             </div>
         </Router>
@@ -62,8 +79,12 @@ function App() {
 function Home() {
     return (
         <div >
-            <BigBanner/>
-            <TypeProduct/>
+            <Categories />
+            <BigBanner />
+            <ProductSale/>
+            <TypeBrand />
+            <SmallBanner />
+            <DasteBandi/>
         </div>
     )
 }

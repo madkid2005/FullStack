@@ -1,6 +1,22 @@
 @font-face {
   font-family: "IR";
-  src:  url("./Fonts/FontFarsi.ttf") format("truetype");;
+  src:  url("./Fonts/FontFarsi.ttf") format("truetype");
+}
+@font-face {
+  font-family: "ENG";
+  src:  url("./Fonts/font-En.otf") ;
+}
+
+@font-face {
+  font-family: "IR2";
+  src:  url("./Fonts/BHoma.ttf") ;
+}
+
+.IR2{
+  font-family: "IR2";
+}
+.ENG{
+  font-family: "ENG";
 }
 body {
   margin: 0;

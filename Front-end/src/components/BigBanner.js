@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function BigBanner() {
     return (
-        <div>
+        <div className=''>
             <div id="carouselExampleRide" class="carousel slide" data-bs-ride="true">
                 <div class="carousel-inner">
                     <div class="carousel-item active">

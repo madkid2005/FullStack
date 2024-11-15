@@ -41,24 +41,26 @@ class APIKeyRequiredMixin:
     )
 )
 class RegisterCustomerView(APIKeyRequiredMixin, APIView):
-
     permission_classes = [AllowAny]
-    
+
     def post(self, request):
         serializer = CustomerRegisterSerializer(data=request.data)
         if serializer.is_valid():
             mobile = serializer.validated_data['mobile']
-            # Check if the user already exists, but don't create it yet.
-            user = MyUser.objects.filter(mobile=mobile).first()
-            if user:
-                # If the user already exists, generate and send the OTP
-                user.generate_otp()
-                return Response({"message": "OTP sent to mobile"}, status=status.HTTP_200_OK)
-            else:
-                # If the user doesn't exist, just return an error (they will be created after OTP is verified)
-                return Response({"error": "Mobile not registered, please verify your OTP first."}, 
-                                 status=status.HTTP_400_BAD_REQUEST)
+            user, created = MyUser.objects.get_or_create(
+                mobile=mobile,
+                defaults={'is_customer': True}  # Set as customer if new user
+            )
+
+            # Generate and send OTP (regardless of whether new or existing user)
+            user.generate_otp()
+            return Response({
+                "message": "OTP sent to mobile",
+                "is_new_user": created  # Indicate if it's a new user
+            }, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 # -----------------------------------------------------------------------------------------------
@@ -102,31 +104,30 @@ class VerifyOTPView(APIKeyRequiredMixin, APIView):
             mobile = serializer.validated_data['mobile']
             otp = serializer.validated_data['otp']
             try:
-                # Find user by mobile
                 user = MyUser.objects.get(mobile=mobile)
                 
-                # Check if OTP is valid
-                if user.is_otp_valid(otp):
+                # Check if the entered OTP matches the one saved in the database
+                if user.otp == otp and user.is_otp_valid(otp):
                     user.is_verified = True
                     user.save()
-                    
-                    # If user doesn't exist yet, create it after OTP is verified
-                    if user.is_verified and not user.is_customer:
-                        user.is_customer = True
-                        user.save()
-
                     refresh = RefreshToken.for_user(user)
-                    user_type = 'seller' if user.is_seller else 'customer'
+                    user_type = 'customer'
 
+                    # Check if the profile is completed for new users
+                    profile_exists = Customer.objects.filter(user=user).exists()
+                    
                     return Response({
                         "message": "Logged in successfully",
                         "access_token": str(refresh.access_token),
                         "refresh_token": str(refresh),
-                        "user_type": user_type
+                        "user_type": user_type,
+                        "profile_complete": profile_exists  # If False, prompt to complete profile
                     }, status=status.HTTP_202_ACCEPTED)
+                
                 return Response({"error": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
             except MyUser.DoesNotExist:
                 return Response({"error": "Invalid mobile number"}, status=status.HTTP_400_BAD_REQUEST)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -139,15 +140,71 @@ class VerifyOTPView(APIKeyRequiredMixin, APIView):
 )
 class CompleteCustomerProfileView(APIView):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
+
+    def get(self, request, user_id):
+        """
+        Return the current profile data (if any) for the user to edit.
+        """
+        # Fetch the user by user_id (should match the authenticated user)
+        try:
+            user = MyUser.objects.get(id=user_id)
+            if user != request.user:
+                return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+
+            # Fetch associated customer profile if it exists
+            customer_profile = Customer.objects.filter(user=user).first()
+
+            # Return current profile data or an empty form for completion
+            profile_data = {
+                "first_name": customer_profile.first_name if customer_profile else "",
+                "last_name": customer_profile.last_name if customer_profile else "",
+                "meli_code": customer_profile.meli_code if customer_profile else "",
+                "address1": customer_profile.address1 if customer_profile else "",
+                "address2": customer_profile.address2 if customer_profile else "",
+                "city": customer_profile.city if customer_profile else "",
+                "zipcode": customer_profile.zipcode if customer_profile else "",
+                "date_of_birth": customer_profile.date_of_birth if customer_profile else ""
+            }
+            
+            return Response({
+                "message": "Complete your profile",
+                "profile_data": profile_data
+            }, status=status.HTTP_200_OK)
+        
+        except MyUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, user_id):
-        user = MyUser.objects.get(id=user_id, is_customer=True)
-        serializer = CustomerProfileSerializer(data=request.data)
-        if serializer.is_valid():
-            Customer.objects.create(user=user, **serializer.validated_data)
-            return Response({"message": "Customer profile completed successfully"}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        """
+        Complete the user's profile with the provided data.
+        """
+        # Fetch the user by user_id (should match the authenticated user)
+        try:
+            user = MyUser.objects.get(id=user_id)
+            if user != request.user:
+                return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+
+            # Use the CustomerProfileSerializer to validate the incoming data
+            serializer = CustomerProfileSerializer(data=request.data)
+            if serializer.is_valid():
+                # Create or update the associated customer profile
+                customer_profile, created = Customer.objects.get_or_create(user=user)
+                customer_profile.first_name = serializer.validated_data['first_name']
+                customer_profile.last_name = serializer.validated_data['last_name']
+                customer_profile.meli_code = serializer.validated_data['meli_code']
+                customer_profile.address1 = serializer.validated_data['address1']
+                customer_profile.address2 = serializer.validated_data['address2']
+                customer_profile.city = serializer.validated_data['city']
+                customer_profile.zipcode = serializer.validated_data['zipcode']
+                customer_profile.date_of_birth = serializer.validated_data['date_of_birth']
+                customer_profile.save()
+
+                return Response({"message": "Profile completed successfully"}, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        except MyUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
     
 
 # -----------------------------------------------------------------------------------------------

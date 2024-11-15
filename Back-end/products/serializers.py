@@ -8,7 +8,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'parent', 'children']
+        fields = ['id', 'name', 'parent', 'children', 'icon', 'image',]
 
     def get_children(self, obj):
         return CategorySerializer(obj.children, many=True).data
@@ -67,15 +67,14 @@ class ProductSerializer(serializers.ModelSerializer):
 #---------------------------------------------------------------------------
 
 class BrandSerializer(serializers.ModelSerializer):
-
     image_url = serializers.SerializerMethodField()  
 
     class Meta:
         model = Brand 
         fields = ['image_url', 'name', 'image']
-        
+
     def get_image_url(self, obj):
         request = self.context.get('request')
         if obj.image:
             return request.build_absolute_uri(obj.image.url)
-        return None   
+        return None

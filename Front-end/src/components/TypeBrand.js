@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-export default function TypeProduct() {
+export default function TypeBrand() {
     const [Brands, setBrands] = useState([]);
 
     useEffect(() => {
@@ -13,7 +13,7 @@ export default function TypeProduct() {
 
     return (
         <div>
-            <h4 className='text-center mt-5'>خرید بر اساس دسته بندی</h4>
+            <h4 className='text-center mt-5'>برندها</h4>
             
             <div className='container  mt-3'>
                 <div className='row  row-sm-cols-2 row-cols-lg-8'>

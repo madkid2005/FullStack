@@ -118,8 +118,8 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle'
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '5/minute',
-        'user': '10/minute'
+        'anon': '50/minute',
+        'user': '100/minute'
     },
 }
 
@@ -165,7 +165,7 @@ CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 
 # هدرهای امنیتی HTTP
-SECURE_HSTS_SECONDS = 1 # ۱ سال
+SECURE_HSTS_SECONDS = 9  # ۱ سال
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 X_FRAME_OPTIONS = 'DENY'

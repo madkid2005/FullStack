@@ -1,68 +1,100 @@
-import React, { useState, useEffect } from 'react';
-import "./ProductSale.css"
-const ProductSlider = () => {
-    const [products, setProducts] = useState([]);
 
-    useEffect(() => {
-        // Fetching data from your API
-        fetch('http://127.0.0.1:8000/api/products/products/on-sale/')
-            .then(response => response.json())
-            .then(data => setProducts(data))  // Setting products in state
-            .catch(error => console.error('Error fetching products:', error));  // Handling errors
-    }, []); // The empty array means this useEffect runs only once when the component is mounted
+import React, { useState, useEffect } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/scrollbar";
 
-    useEffect(() => {
-        // Initialize Swiper after the component is mounted
-        if (window.Swiper) {
-            new window.Swiper('.swiper', {
-                spaceBetween: 10, // Distance between slides
-                slidesPerView: 4, // Number of slides visible at once
-                navigation: true, // Enable navigation buttons
-                breakpoints: {
-                    640: {
-                        slidesPerView: 2, // 2 slides on smaller screens
-                    },
-                    768: {
-                        slidesPerView: 4, // 4 slides on medium screens
-                    },
-                    1024: {
-                        slidesPerView: 8, // 8 slides on larger screens
-                    },
-                },
-            });
+export default function ProductSale() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/products/products/on-sale/")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
-    }, [products]); // Re-run Swiper initialization when products are loaded
+        return response.json();
+      })
+      .then((data) => {
+        setProducts(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+        setLoading(false);
+      });
+  }, []);
 
-    return (
-        <div className="container mt-5">
-            <div className='row'>
-                <div className='col-lg-2 bg-red'></div>
-                <div className='col-lg-10  bg-danger'>
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-                    <div className="swiper ">
-                        <div className="swiper-wrapper ">
-                            {products.length > 0 ? (
-                                products.map(product => (
-                                    <div className="swiper-slide bg-white  " key={product.id}>
-                                        <div className="product-card">
-                                            <img className='img-fluid p-2' src={product.image || 'https://via.placeholder.com/150'} alt={product.name} />
-                                            <p className='text-center'>{product.name}</p>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <p>در حال بارگذاری...</p>
-                            )}
-                        </div>
-                        <div className="swiper-pagination"></div>
-                        <div className="swiper-button-next"></div>
-                        <div className="swiper-button-prev"></div>
-                    </div>
+  if (products.length === 0) {
+    return <div>No products on sale</div>;
+  }
 
-                </div>
+  return (
+    <div style={{ height: "500px", width: "300px", overflow: "hidden" }}>
+      <Swiper
+        direction="vertical"
+        slidesPerView={2}
+        spaceBetween={20}
+        scrollbar={{
+          draggable: true,
+        }}
+        style={{ height: "100%" }}
+      >
+        {products.map((product) => (
+          <SwiperSlide key={product.id}>
+            <div className="bg-blue70"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "space-between",
+                height: "220px", // ارتفاع هر اسلاید
+                borderRadius: "8px",
+                padding: "10px",
+                textAlign: "center",
+              }}
+            >
+              {/* نام محصول */}
+              <h4 style={{ marginBottom: "10px", fontSize: "16px" }}>
+                {product.name || "نام محصول"}
+              </h4>
+
+              {/* عکس محصول */}
+              <img
+                src={product.image}
+                alt={`Product ${product.id}`}
+                style={{
+                  maxWidth: "80%",
+                  maxHeight: "80px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                }}
+              />
+
+              {/* دکمه خرید */}
+              <button
+                style={{
+                  padding: "8px 16px",
+                  backgroundColor: "#007bff",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                }}
+              >
+                خرید
+              </button>
             </div>
-        </div>
-    );
-};
-
-export default ProductSlider;
+          </SwiperSlide>
+        ))}
+      </Swiper>
+     
+    </div>
+    
+  );
+}

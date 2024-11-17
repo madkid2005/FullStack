@@ -5,11 +5,12 @@ import TypeBrand from './components/TypeBrand';
 import BigBanner from './components/BigBanner';
 import Categories from './components/Categories';
 import ProductDetail from './components/ProductDatial';
-import TakKharid from './components/TakKharid';
-import ProductSale from './components/ProductSale';
 import "./App.css"
 import SmallBanner from './components/SmallBanner';
 import DasteBandi from './components/DasteBandi';
+import TakKharid from './components/TakKharid';
+import Footer from './components/Footers';
+import Popularproducts from './components/Popularproducts';
 
 function App() {
 
@@ -25,29 +26,52 @@ function App() {
                     </div>
 
 
-                    <div className='container-fluid mt-2'>
+                    <div className='container-fluid  bg-blue70'>
                         <div className='row'>
 
-                            <div className='col-lg-2'>
+                            <div className='col-lg-5 d-flex'>
+
                                 <TakKharid />
+                                <span className="ms-2 mt-0 mb-0 d-flex align-items-center fw-bold">
+                                    <span className='fw-bold' style={{ fontSize: '0.9rem' }}>
+                                        <Categories />
+
+                                    </span>
+                                </span>
+                                <span className="ms-3 mt-0 mb-0 d-flex align-items-center fw-bold">
+                                    {/* <i className="bi bi-house fw-bold me-2 mt-1" style={{ fontSize: '1.3rem' }}></i> */}
+                                    <span className='fw-bold' style={{ fontSize: '0.9rem' }}>منو اصلی</span>
+                                </span>
+
+                                <span className="ms-3 mt-0 mb-0 d-flex align-items-center fw-bold">
+                                    {/* <i className="bi bi-list fw-bold me-2 mt-1" style={{ fontSize: '1.4rem' }}></i> */}
+                                    <span className='fw-bold' style={{ fontSize: '0.9rem' }}>بلاگ</span>
+                                </span>
+
+                                <span className="ms-3 mt-0 mb-0 d-flex align-items-center fw-bold">
+                                    {/* <i className="bi bi-list fw-bold me-2 mt-1" style={{ fontSize: '1.4rem' }}></i> */}
+                                    <span className='fw-bold' style={{ fontSize: '0.9rem' }}>پشتیبانی</span>
+                                </span>
 
 
-
-                            </div>
-
-                            <div className='col-lg-5'>
-                                <input
-                                    className='w-100 border-0 input-search rounded-3'
-                                    type="text"
-                                    placeholder="جستجو"
-                                />
                             </div>
 
                             <div className='col-lg-5 '>
+                                <div className='d-flex justify-content-end'>
 
-                                <div className='text-end'>
-                                    <Link to="/">Home</Link> |
-                                    <Link to="/Products">Products</Link> |
+                                    <input
+                                        className='w-75  border-0 input-search rounded-5 mt-2'
+                                        type="text"
+                                        placeholder="جستجو"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className='col-lg-2 '>
+
+                                <div className='text-end mt-2'>
+                                    {/* <Link to="/">Home</Link> |
+                                    <Link to="/Products">Products</Link> | */}
                                     <button className="register-btn ">
                                         <Link to="/register" className="link-text h6">ورود | ثبت نام</Link>
                                     </button>
@@ -79,12 +103,12 @@ function App() {
 function Home() {
     return (
         <div >
-            <Categories />
             <BigBanner />
-            <ProductSale/>
+            <DasteBandi />
             <TypeBrand />
+            <Popularproducts/>
             <SmallBanner />
-            <DasteBandi/>
+            <Footer/>
         </div>
     )
 }

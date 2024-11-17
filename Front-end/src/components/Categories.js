@@ -24,7 +24,7 @@ function Categories() {
 
     return (
         <div className="category-list-container  ">
-            <span onMouseEnter={handleMouseEnter} className="ms-3 mt-0 mb-0 d-flex align-items-center fw-bold">
+            <span onMouseEnter={handleMouseEnter} className="ms-3  mb-0 d-flex align-items-center fw-bold">
                 <i className="bi bi-list fw-bold me-2 mt-1" style={{ fontSize: '1.4rem' }}></i>
                 <span className='fw-bold' style={{ fontSize: '0.9rem' }}>دسته بندی کالاها</span>
             </span>

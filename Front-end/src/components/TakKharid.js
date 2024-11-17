@@ -4,7 +4,7 @@ import './TakKharid.css';
 
 const TakKharid = () => {
   return (
-    <div className="text ">
+    <div className="text mt-2">
       <span style={{ "--i": 0 }}>T</span>
       <span style={{ "--i": 1 }}>a</span>
       <span style={{ "--i": 2 }}>k</span>

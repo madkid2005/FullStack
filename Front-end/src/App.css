@@ -1,13 +1,22 @@
 :root {
-  --primary-color: #d32f2f; /* قرمز اصلی */
-  --secondary-color: #333333; /* مشکی/خاکستری تیره */
-  --background-color: #f8f9fa; /* خاکستری روشن برای پس‌زمینه */
-  --text-color: #212529; /* مشکی تیره برای متون */
-  --white-color: #ffffff; /* سفید */
-  --gray-color: #6c757d; /* خاکستری متوسط */
+  --blue-color100: #0960c2;
+  --blue-color70: #5ac8fa;
+  --blue-color50: rgb(121, 121, 253)(0, 0, 255, 0.719);
+  
 }
-.bg-red{
-  background-color: var(--primary-color);
+
+.bg-blue100{
+  background-color: var(--blue-color100);
+}
+
+
+.bg-blue70{
+  background-color: var(--blue-color70);
+}
+
+
+.bg-blue50{
+  background-color: var(--blue-color50);
 }
 
 .input-search {

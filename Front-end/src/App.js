@@ -11,14 +11,36 @@ import DasteBandi from './components/DasteBandi';
 import TakKharid from './components/TakKharid';
 import Footer from './components/Footers';
 import Popularproducts from './components/Popularproducts';
+import ComplateProfile from "./components/ComplateProfile"
+import { useEffect, useState } from 'react';
 
 function App() {
+    const [isSticky, setIsSticky] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const header = document.getElementById('sticky-header');
+            const offsetTop = header.getBoundingClientRect().top;
+
+            // اگر دیو به بالای صفحه رسید
+            if (offsetTop <= 0) {
+                setIsSticky(true);
+            } else {
+                setIsSticky(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
         <Router>
             <div className="App">
                 <nav className=''>
-                    <div className='d-none d-lg-block'>
+                    <div className='d-none d-lg-block '>
+
                         <img
                             src="https://dkstatics-public.digikala.com/digikala-adservice-banners/57b10f5f0ada47b5fcb78d4e37f18f0b3e97102d_1731137869.gif?x-oss-process=image/format,webp"
                             alt="Banner"
@@ -26,48 +48,54 @@ function App() {
                     </div>
 
 
-                    <div className='container-fluid  bg-blue70'>
+                    <div
+            id="sticky-header"
+            className={`container-fluid ${isSticky ? 'position-fixed top-0 shadow bg-blue70 z-3' : 'bg-blue70'}`}
+        >
                         <div className='row'>
 
-                            <div className='col-lg-5 d-flex'>
-
-                                <TakKharid />
-                                <span className="ms-2 mt-0 mb-0 d-flex align-items-center fw-bold">
-                                    <span className='fw-bold' style={{ fontSize: '0.9rem' }}>
+                            <div className='col-lg-5 col-sm-12 d-lg-flex text-center'>
+                                <span className='d-block'>
+                                <Link to="/">
+                                <TakKharid  />
+                                </Link>
+                                </span>
+                                <span className="ms-2 d mt-0 mb-0 d-flex align-items-center fw-bold">
+                                    <span className='fw-bold d-lg-block d-none' style={{ fontSize: '0.9rem' }}>
                                         <Categories />
 
                                     </span>
                                 </span>
                                 <span className="ms-3 mt-0 mb-0 d-flex align-items-center fw-bold">
                                     {/* <i className="bi bi-house fw-bold me-2 mt-1" style={{ fontSize: '1.3rem' }}></i> */}
-                                    <span className='fw-bold' style={{ fontSize: '0.9rem' }}>منو اصلی</span>
+                                    <span className='fw-bold d-lg-block d-none' style={{ fontSize: '0.9rem' }}>منو اصلی</span>
                                 </span>
 
                                 <span className="ms-3 mt-0 mb-0 d-flex align-items-center fw-bold">
                                     {/* <i className="bi bi-list fw-bold me-2 mt-1" style={{ fontSize: '1.4rem' }}></i> */}
-                                    <span className='fw-bold' style={{ fontSize: '0.9rem' }}>بلاگ</span>
+                                    <span className='fw-bold d-lg-block d-none' style={{ fontSize: '0.9rem' }}>بلاگ</span>
                                 </span>
 
                                 <span className="ms-3 mt-0 mb-0 d-flex align-items-center fw-bold">
                                     {/* <i className="bi bi-list fw-bold me-2 mt-1" style={{ fontSize: '1.4rem' }}></i> */}
-                                    <span className='fw-bold' style={{ fontSize: '0.9rem' }}>پشتیبانی</span>
+                                    <span className='fw-bold d-lg-block d-none' style={{ fontSize: '0.9rem' }}>پشتیبانی</span>
                                 </span>
 
 
                             </div>
+                            <div className='col-lg-1 '>
 
-                            <div className='col-lg-5 '>
-                                <div className='d-flex justify-content-end'>
+                            </div>
+                            <div className='col-lg-4 '>
 
                                     <input
-                                        className='w-75  border-0 input-search rounded-5 mt-2'
+                                        className='w-100   border-0 input-search rounded-5 mt-2 mb-2'
                                         type="text"
                                         placeholder="جستجو"
                                     />
-                                </div>
                             </div>
 
-                            <div className='col-lg-2 '>
+                            <div className='col-lg-2 d-none d-lg-block'>
 
                                 <div className='text-end mt-2'>
                                     {/* <Link to="/">Home</Link> |
@@ -94,6 +122,7 @@ function App() {
                     <Route path="/register" element={<RegisterCustomer />} />
                     <Route path="/Products" element={<Products />} />
                     <Route path="/products/:id" element={<ProductDetail />} />
+                    <Route path="/complateprofile" element={<ComplateProfile />} />
                 </Routes>
             </div>
         </Router>

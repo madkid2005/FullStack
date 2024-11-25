@@ -7,9 +7,13 @@ function Categories() {
     const [hoveredMother, setHoveredMother] = useState(false);
 
     useEffect(() => {
-        fetch('http://127.0.0.1:8000/api/products/categories/') // Use your actual API URL
+        fetch('http://127.0.0.1:8000/api/products/categories/',{ headers: {
+            'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999",
+
+        },}) // Use your actual API URL
             .then(response => response.json())
-            .then(data => setCategories(data))
+            .then(data =>  
+                setCategories(data))
             .catch(error => console.error('Error fetching categories:', error));
     }, []);
 

@@ -1,0 +1,43 @@
+.product-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+    text-align: center;
+    height: 200px; /* تنظیم ارتفاع کارت */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-card img {
+    width: 100%; /* تصویر تمام کارت را بپوشاند */
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.1); /* بزرگ‌نمایی هنگام هاور */
+}
+
+.product-card .buy-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0); /* ابتدا دکمه نمایش داده نشود */
+    background-color: rgba(0, 123, 255, 0.9);
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.product-card:hover .buy-button {
+    transform: translate(-50%, -50%) scale(1); /* دکمه به مرکز ظاهر شود */
+    opacity: 1; /* دکمه قابل مشاهده شود */
+}

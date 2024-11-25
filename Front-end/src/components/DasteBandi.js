@@ -4,12 +4,26 @@ export default function DasteBandi() {
     const [Dastebandis, setDasteBandis] = useState([])
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8000/api/products/categories/")
-            .then(res => res.json())
-            .then(data => {
-                setDasteBandis(data)
+        fetch("http://127.0.0.1:8000/api/products/categories/", {
+            headers: {
+                'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999"
+            },
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
             })
-    }, [])
+            .then(data => {
+                console.log("Response data:", data); // برای دیباگ
+                setDasteBandis(data);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+    }, []);
+    
     return (
         <div className='container-fluid mt-5'>
 

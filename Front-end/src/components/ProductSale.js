@@ -9,7 +9,9 @@ export default function ProductSale() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/products/products/on-sale/")
+    fetch("http://127.0.0.1:8000/api/products/products/on-sale/",{ headers: {
+      'X-API-KEY' : "thisisapikeytoaccesstoapiendpoints999",
+  },})
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");

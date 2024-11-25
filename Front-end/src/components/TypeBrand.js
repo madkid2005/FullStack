@@ -4,7 +4,9 @@ export default function TypeBrand() {
     const [Brands, setBrands] = useState([]);
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8000/api/products/Brand/")
+        fetch("http://127.0.0.1:8000/api/products/Brand/",{ headers: {
+            'X-API-KEY' : "thisisapikeytoaccesstoapiendpoints999",
+        },})
             .then(response => response.json())
             .then(data => {
                 setBrands(data);

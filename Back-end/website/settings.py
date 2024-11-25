@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 'website.middleware.APIKeyMiddleware',
+    'website.middleware.APIKeyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -104,6 +104,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    
     # manage permissions 
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -124,23 +125,21 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'users.MyUser'
-
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # مدت زمان اعتبار توکن دسترسی
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # مدت زمان اعتبار توکن رفرش
-    'ROTATE_REFRESH_TOKENS': True,  # چرخش توکن‌ها بعد از هر بار استفاده
-    'BLACKLIST_AFTER_ROTATION': True,  # سیاهه‌برداری از توکن‌های استفاده شده
-    'AUTH_HEADER_TYPES': ('Bearer',),  # نوع هدر توکن برای ارسال درخواست‌ها
-    'SIGNING_KEY': SECRET_KEY,  # کلید امضای توکن‌ها (همان SECRET_KEY پروژه)
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'ALGORITHM': 'HS256',  # الگوریتم رمزگذاری
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'SIGNING_KEY': SECRET_KEY,
 }
 
-# Allow requests from localhost:3000
-CORS_ALLOW_ALL_ORIGINS = True
 
+# / CORS / Allow requests from localhost:3000 (React)
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "x-api-key",
+    "authorization",
+]
 
 # kavenegar
 Kavenegar_API = ''
@@ -174,3 +173,6 @@ SECURE_BROWSER_XSS_FILTER = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#Ensure HTTPS
+SECURE_SSL_REDIRECT = False

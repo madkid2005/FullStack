@@ -7,9 +7,14 @@ function ProductList() {
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/products/products/')
+        axios
+            .get('http://127.0.0.1:8000/api/products/products/', {
+                headers: {
+                    'X-API-KEY' : "thisisapikeytoaccesstoapiendpoints999",
+                },
+            })
             .then(response => setProducts(response.data))
-            .catch(error => console.error(error));
+            .catch(error => console.error('Error fetching products:', error));
     }, []);
 
     return (

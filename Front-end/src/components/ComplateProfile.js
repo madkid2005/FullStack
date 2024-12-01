@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './CompleteProfile.css';
 
 export default function CompleteProfile() {
-    // استفاده از useState برای مدیریت مقادیر فرم
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [meliCode, setMeliCode] = useState('');
@@ -13,12 +12,38 @@ export default function CompleteProfile() {
     const [dob, setDob] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    
+    const refreshAPI = async () => {
+        const tokenrefresh = localStorage.getItem('refresh_tokenJWT'); // توکن رفرش که از قبل ذخیره شده
 
-    // تابع برای ارسال فرم
+        try {
+            const res = await fetch("http://127.0.0.1:8000/api/users/token/refresh/", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999"
+                },
+                body: JSON.stringify({ refresh: tokenrefresh })
+            });
+
+            const data = await res.json();
+            if (data.access) {
+                localStorage.setItem("access_tokenJWT", data.access); // ذخیره توکن جدید
+                console.log("Access Token تازه:", data.access);
+            }
+        } catch (error) {
+            console.error("خطا در دریافت توکن جدید:", error);
+        }
+    };
+
+    useEffect(() => {
+        refreshAPI(); 
+    }, []);
+
+    // تابع برای ارسال داده‌ها
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('access_token');  // توکن دسترسی که از قبل ذخیره شده
-        console.log(token);
+        const token = localStorage.getItem('access_tokenJWT'); 
 
         if (!token) {
             setErrorMessage("برای ارسال اطلاعات باید وارد شوید.");
@@ -42,19 +67,13 @@ export default function CompleteProfile() {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999",
-                    'Authorization': `Bearer ${token}`
-                  
-
-
+                    'Authorization': `Bearer ${token}` // استفاده از توکن جدید
                 },
                 body: JSON.stringify(profileData)
-                
             });
-            console.log(profileData);
-            console.log(token);
-            
 
             const data = await response.json();
+console.log(data);
 
             if (response.ok) {
                 setSuccessMessage(data.message || "پروفایل با موفقیت تکمیل شد!");
@@ -66,6 +85,7 @@ export default function CompleteProfile() {
             setErrorMessage('خطا در اتصال به سرور');
         }
     };
+
     return (
         <div className="container">
             <h2>تکمیل پروفایل مشتری</h2>

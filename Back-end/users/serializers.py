@@ -8,7 +8,7 @@ import re
 class CompleteCustomerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['first_name', 'last_name']
+        fields = ['first_name', 'last_name', 'meli_code', 'address1', 'address2', 'city', 'zipcode', 'date_of_birth']
 
 # Serializer for seller registration (Step 1)
 class SellerRegistrationSerializer(serializers.ModelSerializer):

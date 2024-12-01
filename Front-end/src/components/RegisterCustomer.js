@@ -1,146 +1,110 @@
 import React, { useState } from 'react';
-import './RegisterCustomer.css';
-import Notification from './Notification';  // کامپوننت نوتیفیکیشن
 import { useNavigate } from 'react-router-dom';
+import './RegisterCustomer.css';
+import Notification from './Notification';
 
 export default function RegisterCustomer() {
-  const [Mobile, setMobile] = useState("");
-  const [OtpValue, setOtpValue] = useState("");
-  const [ExitsNumber, setExitsNumber] = useState("");
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [isNumberSent, setIsNumberSent] = useState(true);
-  const [isNewUser, setIsNewUser] = useState();
-  const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState('');
-  const [messageType, setMessageType] = useState('');
+    const [mobile, setMobile] = useState("");
+    const [otpValue, setOtpValue] = useState("");
+    const [isOtpSent, setIsOtpSent] = useState(false);
+    const [isNewUser, setIsNewUser] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [messageType, setMessageType] = useState('');
+    const navigate = useNavigate();
 
-  const showError = (message, type) => {
-    setErrorMessage(message);
-    setMessageType(type);
-  };
+    const showError = (message, type) => {
+        setErrorMessage(message);
+        setMessageType(type);
+    };
 
-  function SubmitNumber() {
-    if (Mobile.length === 11) {
-        console.log("11 OK");
-    
-    fetch("http://127.0.0.1:8000/api/users/customers/register-login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "thisisapikeytoaccesstoapiendpoints999"
-      },
-      body: JSON.stringify({ mobile: Mobile }),
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log("Response:", data);
-        if (data.mobile) {
-          showError("این شماره موبایل وجود دارد", "error");
+    const submitMobileNumber = () => {
+        if (mobile.length === 11) {
+            fetch("http://127.0.0.1:8000/api/users/customers/register-login/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": "thisisapikeytoaccesstoapiendpoints999"
+                },
+                body: JSON.stringify({ mobile })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.otp_sent) {
+                        setIsOtpSent(true);
+                        showError("کد تایید ارسال شد", "success");
+                        setIsNewUser(data.is_new);
+                    } else {
+                        showError("خطا در ارسال شماره موبایل", "error");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    showError("خطا در ارسال شماره موبایل", "error");
+                });
         } else {
-          setIsOtpSent(true);
-          setIsNumberSent(false);
-          showError("کد تایید ارسال شد", "success");
+            showError(`شماره موبایل باید 11 رقم باشد. شما وارد کرده‌اید: ${mobile.length} رقم`, "error");
         }
-        if (data.is_new) {
-          setIsNewUser(true);
-        } else {
-          setIsNewUser(false);
-        }
-      })
-      .catch(error => {
-        console.error("Error:", error);
-        showError("خطا در ارسال شماره موبایل", "error");
-      });
-    } else {
-        showError(`شماره موبایل باید 11 رقم باشد. شما وارد کرده‌اید: ${Mobile.length} رقم`, "error");
+    };
 
-        return; 
-      }
-  }
+    const verifyOtp = () => {
+        fetch("http://127.0.0.1:8000/api/users/customers/verify-otp/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-API-KEY": "thisisapikeytoaccesstoapiendpoints999"
+            },
+            body: JSON.stringify({ mobile, otp: otpValue })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.tokens) {
+                    localStorage.setItem("access_tokenJWT", data.tokens.access);
+                    localStorage.setItem("refresh_tokenJWT", data.tokens.refresh);
+                    showError("ورود موفقیت‌آمیز", "success");
+                    navigate(data.is_new ? "/Products" : "/");
+                } else {
+                    showError("کد تایید اشتباه است", "error");
+                }
+            })
+            .catch(error => {
+                console.error("Error verifying OTP:", error);
+                showError("خطا در تایید کد OTP", "error");
+            });
+    };
 
-  const GetvalueInput = (e) => {
-    const number = e.target.value;
-    setMobile(number);
-  };
+    return (
+        <div className="container-fluid bg-register">
+            {errorMessage && <Notification message={errorMessage} type={messageType} />}
+            <div className="row d-flex justify-content-center text-center align-items-center vh-100">
+                <div className="col-sm-12 col-md-5 mx-auto my-auto animated-card">
+                    <h2 className="animated-title">ثبت نام کاربر</h2>
+                    <input
+                        className="input-field custom-input"
+                        type="number"
+                        onChange={(e) => setMobile(e.target.value)}
+                        placeholder="شماره موبایل را وارد کنید"
+                    />
+                    {!isOtpSent && (
+                        <button className="submit-btn custom-btn" onClick={submitMobileNumber}>
+                            ارسال شماره
+                        </button>
+                    )}
+                    {isOtpSent && (
+                        <div className="otp-container">
+                            <input
+                                className="input-field custom-input"
+                                type="number"
 
-  const GetOtpValue = (e) => {
-    const otp = e.target.value;
-    setOtpValue(otp);
-  };
-
-  function Verify() {
-    fetch(`http://127.0.0.1:8000/api/users/customers/verify-otp/`, {
-      method: "POST",
-      headers: {
-        'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ mobile: Mobile, otp: OtpValue })
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('تایید OTP با شکست مواجه شد');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log("پاسخ تایید:", data);
-        if (data.access_token) {
-          localStorage.setItem("access_token", data.access_token);
-          localStorage.setItem("refresh_token", data.refresh_token);
-        } else {
-          showError("کد تایید اشتباه است", "error");
-        }
-        if (isNewUser) {
-          navigate("/Products");
-        } else {
-          navigate("/");
-          showError("ورود موفقیت‌آمیز", "success");
-
-        }
-      })
-      .catch(error => {
-        console.error("خطا در هنگام تایید OTP:", error);
-        showError("خطا در تایید کد OTP", "error");
-      });
-  }
-
-  return (
-    <div className="container-fluid bg-register">
-      {/* نمایش نوتیفیکیشن */}
-      {errorMessage && <Notification message={errorMessage} type={messageType} />}
-      
-      <div className="row d-flex justify-content-center text-center align-items-center vh-100">
-        <div className="col-sm-12 col-md-5 mx-auto my-auto animated-card">
-          <h2 className="animated-title">ثبت نام کاربر</h2>
-          <input
-            className="input-field custom-input"
-            type="number"
-            onChange={GetvalueInput}
-            placeholder="شماره موبایل را وارد کنید"
-          />
-          {isNumberSent && (
-            <button className="submit-btn custom-btn" onClick={SubmitNumber}>
-              ارسال شماره
-            </button>
-          )}
-          <h1 className="error-message">{ExitsNumber}</h1>
-
-          {isOtpSent && (
-            <div className="otp-container">
-              <input
-                className="input-field custom-input"
-                type="number"
-                onChange={GetOtpValue}
-                placeholder="کد تایید را وارد کنید"
-              />
-              <button className="submit-btn custom-btn" onClick={Verify}>
-                تایید کد
-              </button>
+onChange={(e) => setOtpValue(e.target.value)}
+                                placeholder="کد تایید را وارد کنید"
+                            />
+                            <button className="submit-btn custom-btn" onClick={verifyOtp}>
+                                تایید کد
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
-          )}
         </div>
-      </div>
-    </div>
-  );
+    );
 }

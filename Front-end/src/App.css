@@ -1,12 +1,12 @@
 :root {
-  --blue-color100: #0960c2;
+  --color--1: #62666d;
   --blue-color70: #5ac8fa;
   --blue-color50: rgb(121, 121, 253)(0, 0, 255, 0.719);
   
 }
 
-.bg-blue100{
-  background-color: var(--blue-color100);
+.text-color1{
+  color: var(--color--1);
 }
 
 

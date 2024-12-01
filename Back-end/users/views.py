@@ -61,8 +61,6 @@ def get_tokens_for_user(user):
 # Utility function to send OTP (placeholder for actual implementation)
 def send_otp(mobile, otp):
     print(f"Sending OTP {otp} to mobile {mobile}")  # Replace with actual sending logic
-    print("User:  Is Authenticated: ")
-
     
 # Customer Registration/Login---------------------------------------------------------------------------------------
 class CustomerRegisterLoginView(APIView):
@@ -90,28 +88,13 @@ class VerifyCustomerOTPView(APIView):
             mobile = serializer.validated_data['mobile']
             otp = serializer.validated_data['otp']
             user = get_object_or_404(MyUser, mobile=mobile)
-            
             if user.is_otp_valid(otp):
                 tokens = get_tokens_for_user(user)
-                
-                # Check if the user has a completed profile
                 if not hasattr(user, 'customer_profile'):
-                    return Response({
-                        'message': 'Profile completion required.',
-                        'tokens': tokens,
-                        'is_new': True  # Indicating the user is new and needs to complete the profile
-                    }, status=status.HTTP_200_OK)
-                
-                return Response({
-                    'message': 'Login successful.',
-                    'tokens': tokens,
-                    'is_new': False  # User has an existing profile, no need to complete it
-                }, status=status.HTTP_200_OK)
-            
+                    return Response({'message': 'Profile completion required.', 'tokens': tokens}, status=status.HTTP_200_OK)
+                return Response({'message': 'Login successful.', 'tokens': tokens}, status=status.HTTP_200_OK)
             return Response({'error': 'Invalid or expired OTP.'}, status=status.HTTP_400_BAD_REQUEST)
-        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 # Complete Customer Profile
 class CompleteCustomerProfileView(APIView):
@@ -125,7 +108,6 @@ class CompleteCustomerProfileView(APIView):
             serializer.save(user=user)
             return Response({'message': 'Profile completed successfully.'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 # Seller Registration (Step 1)
 class SellerRegisterView(APIView):
@@ -184,7 +166,7 @@ class LogoutView(APIView):
             refresh_token = request.data.get('refresh')
             if refresh_token:
                 token = RefreshToken(refresh_token)
-                token.blacklist()
+                token.blacklist() # Only explicitly logout
                 return Response({'message': 'Logged out successfully.'}, status=status.HTTP_200_OK)
             return Response({'error': 'Refresh token is required for logout.'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:

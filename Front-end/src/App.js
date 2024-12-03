@@ -49,40 +49,51 @@ function App() {
     }, [logout]); // بررسی وضعیت توکن هنگام بارگذاری کامپوننت
 
     const handleLogout = async () => {
-        const refreshToken = localStorage.getItem('refresh_tokenJWT'); // فرض بر این است که refresh_token در localStorage ذخیره شده است
-
-        if (!refreshToken) {
-            console.error("No refresh token found");
+        const refreshToken = localStorage.getItem('refresh_tokenJWT');
+        const accessToken = localStorage.getItem('access_tokenJWT');
+    
+        // بررسی وجود توکن‌ها
+        if (!refreshToken || !accessToken) {
+            console.error("No refresh or access token found");
             return;
         }
-
+        console.log(refreshToken);
+        console.log(accessToken);
+    
         try {
             const response = await fetch('http://127.0.0.1:8000/api/users/logout/', {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${accessToken}`,
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('access_tokenJWT')}`,
                     'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999"
                 },
                 body: JSON.stringify({ refresh: refreshToken })
             });
-
+    
+            // بررسی وضعیت درخواست
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error response:", errorData.error);
+                return;
+            }
+    
             const data = await response.json();
             console.log(data);
-            
-
-            if (response.ok) {
-                console.log(data.message);  // نمایش پیام موفقیت
+    
+            // در صورت موفقیت
+            if (data.message) {
+                console.log(data.message); // نمایش پیام موفقیت
                 localStorage.removeItem('access_tokenJWT');  // حذف access token از localStorage
                 localStorage.removeItem('refresh_tokenJWT');  // حذف refresh token از localStorage
                 setLogout(false);  // به روز رسانی وضعیت logout
-            } else {
-                console.error(data.error);  // نمایش خطا در صورت وجود
             }
+    
         } catch (error) {
             console.error('Logout failed:', error);  // نمایش خطای اتصال
         }
     };
+    
 
     return (
         <Router>

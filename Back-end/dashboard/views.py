@@ -25,10 +25,10 @@ class CustomerDashboardView(APIView):
         if not user.is_customer:
             return Response({"error": "Not a customer"}, status=403)
         return Response({
-            "last_orders": "/api/customers/orders/",
-            "last_payments": "/api/customers/payments/",
-            "notifications": "/api/customers/notifications/",
-            "chat_support": "/api/customers/chat-support/"
+            "last_orders": "/customers/orders/",
+            "last_payments": "/customers/payments/",
+            "notifications": "/customers/notifications/",
+            "chat_support": "/customers/chat-support/"
         })
 
 class LastOrdersView(APIView):
@@ -52,7 +52,7 @@ class NotificationsView(APIView):
 
     def get(self, request):
         user = request.user
-        notifications = Notification.objects.filter(user=user).order_by('-date')[:10]
+        notifications = Notification.objects.filter(user=user)
         return Response(NotificationsSerializer(notifications, many=True).data)
 
 class ChatSupportView(APIView):

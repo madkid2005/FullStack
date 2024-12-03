@@ -11,7 +11,7 @@ class LastOrdersSerializer(serializers.ModelSerializer):
 class LastPaymentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['id', 'amount', 'date', 'status']
+        fields = ['id', 'amount']
 
 class NotificationsSerializer(serializers.ModelSerializer):
     class Meta:

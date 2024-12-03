@@ -8,6 +8,7 @@ from django.conf import settings
 import logging
 from django.shortcuts import get_object_or_404
 
+from django.http import JsonResponse
 # restframework
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -156,18 +157,26 @@ class SellerLoginView(APIView):
             return Response({'error': 'Invalid or expired OTP.'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class LogoutView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = []  # غیرفعال کردن احراز هویت
+    permission_classes = []  # غیرفعال کردن محدودیت دسترسی
+
+    def options(self, request, *args, **kwargs):
+        response = Response(status=200)
+        response['Access-Control-Allow-Origin'] = '*'
+        response['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        return response
 
     def post(self, request):
         try:
-            # Blacklist the refresh token to log the user out
             refresh_token = request.data.get('refresh')
             if refresh_token:
                 token = RefreshToken(refresh_token)
-                token.blacklist() # Only explicitly logout
-                return Response({'message': 'Logged out successfully.'}, status=status.HTTP_200_OK)
-            return Response({'error': 'Refresh token is required for logout.'}, status=status.HTTP_400_BAD_REQUEST)
+                token.blacklist()
+                return Response({'message': 'Logged out successfully.'}, status=200)
+            return Response({'error': 'Refresh token is required for logout.'}, status=400)
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': str(e)}, status=400)

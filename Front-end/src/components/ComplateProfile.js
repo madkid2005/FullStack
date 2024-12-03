@@ -65,9 +65,9 @@ export default function CompleteProfile() {
             const response = await fetch('http://127.0.0.1:8000/api/users/customers/complete-profile/', {
                 method: 'POST',
                 headers: {
+                    'Authorization': `Bearer ${token}`, // استفاده از توکن جدید
                     'Content-Type': 'application/json',
                     'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999",
-                    'Authorization': `Bearer ${token}` // استفاده از توکن جدید
                 },
                 body: JSON.stringify(profileData)
             });

@@ -1,87 +1,144 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export default function DashboardCustomer() {
-    const [showProps, setShowProps] = useState([]);
-    const navigate = useNavigate();
+    const [datadashbord, setDatadashboard] = useState([]);
+    const [chatsupporters, setChatsupporters] = useState("");
+    const [notifications, setNotifications] = useState("");
+
+    const [Lastorders, setLastorders] = useState("");
+    const [lastpayments, setLastpayments] = useState("");
+    
+    const [activeTab, setActiveTab] = useState("support"); // برای کنترل تب فعال
+    const token = localStorage.getItem('access_tokenJWT');
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Retrieve tokens from localStorage
-                const accessToken = localStorage.getItem('access_tokenJWT');
-                const refreshToken = localStorage.getItem('refresh_tokenJWT');
-
-                if (!accessToken || !refreshToken) {
-                    alert('لطفاً وارد شوید.');
-                    navigate('/login');
-                    return;
-                }
-
-                // Fetch data using the access token
-                const response = await fetch("http://127.0.0.1:8000/api/dashboard/customers/dashboard/", {
-                    method: "GET",
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999"
-                    }
-                });
-
-                // If the access token is expired, refresh it
-                if (response.status === 401) {
-                    const refreshResponse = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999"
-                        },
-                        body: JSON.stringify({ refresh: refreshToken })
-                    });
-
-                    if (!refreshResponse.ok) {
-                        alert("لطفاً مجدداً وارد شوید.");
-                        navigate('/login');
-                        return;
-                    }
-
-                    const refreshData = await refreshResponse.json();
-                    localStorage.setItem("access_tokenJWT", refreshData.access);
-
-                    // Retry fetching data with the new access token
-                    const retryResponse = await fetch("http://127.0.0.1:8000/api/dashboard/customers/dashboard/", {
-                        method: "GET",
-                        headers: {
-                            'Authorization': `Bearer ${refreshData.access}`,
-                            'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999"
-                        }
-                    });
-
-                    if (!retryResponse.ok) {
-                        throw new Error('Failed to fetch data after refreshing the token.');
-                    }
-
-                    const data = await retryResponse.json();
-                    setShowProps(data);
-                } else {
-                    const data = await response.json();
-                    setShowProps(data);
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                alert("خطایی رخ داده است. لطفاً دوباره امتحان کنید.");
+        fetch("http://127.0.0.1:8000/api/dashboard/customers/dashboard/", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999",
             }
-        };
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                setDatadashboard(data);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }, []);
 
-        fetchData();
-    }, [navigate]);
+    const chatsupporter = () => {
+        const url = datadashbord.chat_support;
+        console.log(url);
+        fetch(`http://127.0.0.1:8000/api/dashboard${url}`, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999",
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                setChatsupporters(data);
+            });
+    };
+
+    const notif = () => {
+        const url = datadashbord.notifications;
+        console.log(url);
+        fetch(`http://127.0.0.1:8000/api/dashboard${url}`, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999",
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                setNotifications(data);
+            });
+    };
+
+    const order = () => {
+        const url = datadashbord.last_orders;
+        console.log(url);
+        fetch(`http://127.0.0.1:8000/api/dashboard${url}`, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999",
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                setLastorders(data);
+            });
+    };
+
+    const payment = () => {
+        const url = datadashbord.last_payments;
+        console.log(url);
+        fetch(`http://127.0.0.1:8000/api/dashboard${url}`, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'X-API-KEY': "thisisapikeytoaccesstoapiendpoints999",
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                setLastpayments(data);
+            });
+    };
+
+    
 
     return (
         <div className='container'>
             <div className='row'>
-                <div className='col-lg-7'>
-                    <div>
-                        <h1>{showProps.last_orders}</h1>
+                <div className='col-lg-4'>
+                    <div className='d-grid'>
+                        {/* دکمه‌ها */}
+                        <button 
+                            onClick={() => { setActiveTab("support"); chatsupporter(); }} 
+                            className='w-100 bg-primary my-1'>
+                            پشتیبانی
+                        </button>
+                        <button 
+                            onClick={() => { setActiveTab("notifications"); notif(); }} 
+                            className='w-100 my-1'>
+                            Notifications
+                        </button>
+                        <button 
+                            onClick={() => {setActiveTab("other") ; order(); }} 
+                            className='w-100 my-1'>
+                            Other
+                        </button>
+                        <button 
+                            onClick={() =>{ setActiveTab("empty"); payment(); }} 
+                            className='w-100 my-1'>
+                            Empty
+                        </button>
                     </div>
+                </div>
+
+                <div className='col-lg-8'>
+                    {/* نمایش محتوا بر اساس تب فعال */}
+                    {activeTab === "support" && <div>{chatsupporters.message}</div>}
+                    {activeTab === "notifications" && <div>{notifications.message}</div>}
+                    {activeTab === "other" && <div>{Lastorders.amount}</div>}
+                    {activeTab === "empty" && <div>{lastpayments.s}</div>}
                 </div>
             </div>
         </div>
